@@ -15,8 +15,10 @@ It only exposes the Odoo web interface at the port 8069.
 This is a sample usage, create a container with name "myodoo":
 
 ```
-docker pull albertoruibal/odoo:7
-docker run -d -p 8069:8069 --name myodoo albertoruibal/odoo:7
+git clone git@github.com:jeroen-vet/docker-odoo7.git
+cd docker-odoo7/7.0
+docker build -t myodoo7img .
+docker run -d  -p 8069:8069 -v /home/user/odoo7mount:/mnt --name odoo7 myodoo7img
 ```
 
 and then access the Odoo web interface with your browser at http://localhost:8069

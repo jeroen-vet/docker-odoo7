@@ -1,10 +1,11 @@
-FROM debian:stable
-MAINTAINER Alberto Alonso Ruibal @albertoruibal
-
+FROM debian:jessie
+MAINTAINER Jeroen Vet @albertoruibal
 #
 # Configure APT packages and upgrade
 #
-RUN echo deb http://nightly.odoo.com/7.0/nightly/deb/ ./ > /etc/apt/sources.list.d/openerp-70.list
+# RUN sed -i 's/deb.debian.org/ftp.cn.debian.org/g' /etc/apt/sources.list
+# sources list in clude contrib non free for wkhtmltopdf dependency
+RUN printf "deb http://ftp.cn.debian.org/debian/ jessie main contrib non-free\ndeb http://ftp.cn.debian.org/debian-security/ jessie/updates main contrib non-free" > /etc/apt/sources.list 
 RUN apt-get update
 RUN apt-get upgrade -y
 
@@ -20,8 +21,17 @@ ENV LC_ALL en_US.UTF-8
 #
 # Install PostgreSQL, OpenERP and Supervisor
 #
-RUN apt-get install --allow-unauthenticated -y supervisor postgresql python2.6 openerp
+RUN apt-get install -y python2.7 gnupg
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DEF2A2198183CBB5
 
+RUN echo deb http://nightly.odoo.com/7.0/nightly/deb/ ./ > /etc/apt/sources.list.d/openerp-70.list
+RUN apt-get update
+
+RUN apt-get install -y supervisor postgresql fonts-arphic-ukai fonts-arphic-uming xfonts-base xfonts-75dpi
+RUN apt-get install -y openerp
+ADD wkhtmltox-0.12.2.1_linux-jessie-amd64.deb /tmp/wkhtmltox-0.12.2.1_linux-jessie-amd64.deb
+RUN dpkg -i /tmp/wkhtmltox-0.12.2.1_linux-jessie-amd64.deb
+RUN apt-get install -f
 #
 # Clean
 #
